@@ -1,6 +1,8 @@
+#include "obelisk.h"
+
+
 int
 build(void)
 {
-    
-    return 1;
+    return 0;
 }
