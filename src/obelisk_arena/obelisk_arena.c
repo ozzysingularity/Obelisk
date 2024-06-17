@@ -1,6 +1,7 @@
 #include <obelisk_arena.h>
 
 
+#define OPAQUE  /* types that don't allow caller to modify themselves */
 #define PRIVATE static
 
 /* adds new chunk to the arena */
@@ -72,7 +73,7 @@ arenaChunk_new(size_t chunk_size) THROWS(A_oom)
     void * const ch_next = NULL;
 
     if (!(res = malloc(sizeof(ArenaChunk)))) {
-        a_errno = ACH_oom;
+        a_errno = A_oom;
         return NULL;
     }
 

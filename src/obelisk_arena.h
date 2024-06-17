@@ -31,8 +31,8 @@ typedef struct arena {
 /* error are handled by the user */
 typedef enum arena_error {
     A_ok = 0,
-    ACH_oom,    /* chunk alloc fail, throws if out of memory */
-    ACH_bc,     /* bounds check fail, throws if end of chunk detected
+    A_oom,    /* chunk alloc fail, throws if out of memory */
+    A_bc,     /* bounds check fail, throws if end of chunk detected
                            make a new chunk if bound reached */
 } ArenaError;
 
