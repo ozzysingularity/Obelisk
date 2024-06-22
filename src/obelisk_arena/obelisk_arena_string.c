@@ -23,6 +23,7 @@ arenaString_new(Arena *a, char *sz)
     res.len = res_len;
     res.cap = res_cap;
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -46,6 +47,7 @@ arenaString_alloc(Arena *a, size_t len)
     res.len = res_len;
     res.cap = res_cap;
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -76,6 +78,7 @@ arenaString_cat(Arena *a, void *ams1, void *ams2)
     memcpy(res.str, ams1_sli->str, ams1_sli->len);
     memcpy(res.str + ams1_sli->len, ams2_sli->str, ams2_sli->len);
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -114,19 +117,22 @@ stringSlice_vectorNew(Arena *a, size_t cap)
     res.pos = 0;
     res.slis = arena_alloc(a, sizeof(StringSlice) * res.cap);
 
+    s_errno = S_ok;
     return res;
 }
 
 void
 stringSlice_vectorPut(StringSliceVector *sliv, StringSlice sli)
 {
-    if (sliv->pos + 1 >= sliv->cap) {
+    if (sliv->pos + 1 > sliv->cap) {
         s_errno = SV_bcf;
         return;
     }
 
     sliv->slis[sliv->pos] = sli;
     sliv->pos += 1;
+
+    s_errno = S_ok;
 }
 
 StringSlice *
@@ -136,6 +142,8 @@ stringSlice_at(StringSliceVector sliv, size_t idx)
         s_errno = SV_bcf;
         return NULL;
     }
+
+    s_errno = S_ok;
     return &sliv.slis[idx];
 }
 

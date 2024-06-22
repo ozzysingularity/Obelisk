@@ -33,6 +33,7 @@ string_new(char *sz)
     res.len = res_len;
     res.cap = res_cap;
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -53,6 +54,7 @@ string_alloc(size_t len)
     res.len = res_len;
     res.cap = res_cap;
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -63,6 +65,7 @@ string_fromSlice(StringSlice sli)
 
     memcpy(res.str, sli.str, res.len);
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -91,6 +94,7 @@ string_slice(String *str, size_t offset, size_t len)
     res.str = res_str;
     res.len = res_len;
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -114,6 +118,7 @@ string_sliceCString(char *sz, size_t offset, size_t len)
     res.str = res_str;
     res.len = res_len;
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -144,6 +149,7 @@ string_cat(void *str_a, void *str_b)
     memcpy(res.str, str_a_str, str_a_len);
     memcpy(res.str + str_a_len, str_b_str, str_b_len);
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -181,6 +187,7 @@ string_catWithDelimitCString(void *str_a, void *str_b, char *delimit_buf)
     memcpy(res.str + str_a_len, delimit_buf, delimit_buf_len);
     memcpy(res.str + str_a_len + delimit_buf_len, str_b_str, str_b_len);
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -205,6 +212,7 @@ string_catWithDelimitChar(void *str_a, void *str_b, char delimit_char)
     res.str[sli_a->len] = delimit_char;
     memcpy(res.str + sli_a->len + 1, sli_b->str, sli_b->len);
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -230,6 +238,7 @@ string_catCString(void *ams, char *sz)
 
 
 
+    s_errno = S_ok;
     return res;
 }
 
@@ -241,12 +250,14 @@ string_print(void *ams)
 
     res = write(STDOUT_FILENO, reinterp->str, reinterp->len);
 
+    s_errno = S_ok;
     return res;
 }
 
 size_t
 string_cap(String *str)
 {
+    s_errno = S_ok;
     return str->cap;
 }
 
@@ -254,6 +265,8 @@ size_t
 string_len(void *ams)
 {
     StringSlice *res = (StringSlice*)ams;
+
+    s_errno = S_ok;
     return res->len;
 }
 
@@ -261,6 +274,8 @@ char *
 string(void *ams)
 {
     StringSlice *res = (StringSlice*)ams;
+
+    s_errno = S_ok;
     return res->str;
 }
 
@@ -273,6 +288,26 @@ stringSlice(char *sz)
     res.str = sz;
     res.len = res_len;
 
+    s_errno = S_ok;
     return res;
+}
+
+void
+string_error(void)
+{
+    if (s_errno) {
+        switch (s_errno) {
+            case S_oom:
+                fprintf(stderr, "String Error: OUT OF MEMORY\n");
+                break;
+            case S_bcf: case SV_bcf:
+                fprintf(stderr, "String Error: BOUNDS CHECK FAIL\n");
+                break;
+            default:
+                fprintf(stderr, "String Error: UNEXPECTED ERROR ENCOUNTERED\n");
+                break;
+        }
+        exit(1);
+    }
 }
 

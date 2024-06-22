@@ -153,3 +153,19 @@ arenaChunk_free(ArenaChunk *ach)
     ach->pos = 0;
     ach->cap = 0;
 }
+
+void
+arena_error(void)
+{
+    if (a_errno > A_good) {
+        switch (a_errno) {
+            case A_oom: 
+                fprintf(stderr, "Arena Error: OUT OF MEMORY\n");
+                break;
+            default:
+                fprintf(stderr, "Arena Error: UNEXPECTED ERROR ENCOUNTERED\n");
+                break; /* FALLTHROUGH */
+        }
+        exit(1);
+    }
+}

@@ -8,10 +8,7 @@
 #include <unistd.h>
 
 #include <obelisk_arena.h>
-
-
-#define ALIGN(n)    (( n % 8 ) == 0 ? n + 8 : ((n) - ((n) % 8) + 8))
-#define LEN(a)      (sizeof(a)/sizeof(a[0]))
+#include <obelisk_util.h>
 
 
 typedef struct
@@ -86,6 +83,7 @@ string(void *ams);
 StringSlice
 stringSlice(char *sz);
 
+void string_error(void);
 /* Type Ideas
  * String Vectors (Obelisk.Arena.String)
  *  typedef struct string_vector {

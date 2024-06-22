@@ -6,13 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <obelisk_util.h>
 
-/* The ALIGN Macro
- *  number aligned to 8 byte bound. if it divisible by 8, it keeps the value
- *  if not, it subtracts the remainder of the number divided by 8 (the modulus)
- *  then adds 8
- */
-#define ALIGN(n) (((n) % 8 == 0) ? (n) : ((n) - ((n) % 8) + 8))
 
 /* The THROWS Macro
  *  decorative macros to tell what functions throw in case of error, and what
@@ -64,5 +59,6 @@ void * arena_alloc(Arena *a, size_t len) THROWS(A_oom, A_bcf);
 /* iterates though all of the arena chunks and frees them */
 void arena_free(Arena *a);
 
+void arena_error(void);
 
 #endif  //  OBELISK_ARENA_H
