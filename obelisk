@@ -1,0 +1,115 @@
+--* VERSION 1.0 *--
+
+module "Obelisk" {
+    version "Obelisk 0a1.0";
+
+    description
+        "Obelisk is a build system written in the C programming language.";
+
+    submodule "Obelisk.Arena" {
+        version "Obelisk.Arena 0a1.0";
+
+        description
+            "Obelisk Arena is an arena allocator library written for the
+            Obelisk Build System";
+    }
+
+    submodule "Obelisk.String" {
+        version "Obelisk.String 0a1.0";
+
+        description
+            "Obelisk String is a string library for the Obelisk Build System";
+
+        extension "Obelisk.Arena.String" {
+            version "Obelisk.Arena.String 0a1.0";
+
+            description
+                "An extension to the Obelisk String library that allocates into
+                an arena buffer instead of anywhere in heap memory";
+        }
+    }
+}
+
+--*
+SYNTAX
+
+module = "module" QUOTE { character } "{" { module | submodule | extension | description | version } "}" QUOTE .
+
+submodule = "submodule" QUOTE { character } { "." { character } } QUOTE . "{" { submodule | extension | description | version } "}" QUOTE .
+
+extension = "extension" submodule .
+
+description = "description" QUOTE { character } QUOTE ";" .
+
+version = "version" QUOTE ( module | submodule | extension ) character digit { "." digit } QUOTE ";" .
+*--
+
+--*
+OBOPT (Obelisk Options)
+
+for module "Obelisk" recursive {
+    cache "Disable";
+}
+
+OBuild Script (Obelisk Build Script)
+
+module "Obelisk" {
+    version "0a1.0";
+
+    components {
+        define source_d "src";
+        define output_d "bin";
+        define include_d "src";
+
+        source source_d {
+            "main.c";
+            "obelisk/obelisk.c";
+            "obelisk_string/obelisk_string.c";
+            "obelisk_arena/obelisk_arena.c";
+        }
+
+        include include_d;
+
+        output output_d;
+    }
+
+    submodule "Obelisk.String" {
+        version "0a1.0";
+    }
+
+    submodule "Obelisk.Arena" {
+        version "0a1.0";
+
+        extension "Obelisk.Arena.String" {
+            version "0a1.0";
+        }
+    }
+}
+*--
+
+--*
+
+definition
+
+module "MODNAME" { ... }
+submodule "SUBMODNAME { ... }
+extension "EXTNAME { ... }
+description "DESC";
+version "SX.X[-cX]";
+    S ::=
+        n = pre-alpha,
+        a = alpha,
+        b = beta,
+        v/_ = full release/version
+components { ... }
+define ident "VALUE";
+source DIR { "FILES"; ... }
+include DIR;
+output DIR "NAME";
+flags { "FLAG"; ... }
+
+verison "1.0"; -- full release version 1.0
+version "a1.0"; -- alpha release for version 1.0, also interpreted as "0a1.0"
+version "b1.0"; -- beta release for version 1.0, also interpreted as "0b1.0"
+version "0n1"; -- pre-alpha release for version 1.0
+*--

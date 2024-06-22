@@ -1,5 +1,5 @@
-#ifndef     OBELISK_ARENA_H
-#define     OBELISK_ARENA_H
+#ifndef     OBELISK_ARENA
+#define     OBELISK_ARENA
 
 
 #include <stdio.h>
@@ -48,7 +48,7 @@ typedef enum arena_error {
     /* bounds check fail, throws if end of chunk detected
      * make a new chunk if bound reached
      */
-    A_bcf = 254,
+//    A_bcf = 254,
 } ArenaError;
 
 
@@ -59,7 +59,7 @@ extern ArenaError a_errno;
 void arena_init(Arena *a, size_t chunk_size) THROWS(A_oom);
 
 /* allocates a chunk of memory in the current arena chunk */
-void * arena_alloc(Arena *a, size_t len) THROWS(A_oom, A_bc);
+void * arena_alloc(Arena *a, size_t len) THROWS(A_oom, A_bcf);
 
 /* iterates though all of the arena chunks and frees them */
 void arena_free(Arena *a);

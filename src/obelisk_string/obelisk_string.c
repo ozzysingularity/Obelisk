@@ -8,21 +8,30 @@
 #endif
 
 
+StringError s_errno;
+
+
 String
 string_new(char *sz)
 {
     String res;
 
-    size_t res_len;
     char *res_str;
+    size_t res_len,
+           res_cap;
 
     res_len = strlen(sz);
-    res_str = malloc(res_len);
+    res_cap = ALIGN(res_len);
+    
+    if (!(res_str = malloc(res_cap))) {
+        return (String) { 0 };
+    }
+
     memcpy(res_str, sz, res_len);
 
     res.str = res_str;
     res.len = res_len;
-    res.cap = ALIGN(res_len);
+    res.cap = res_cap;
 
     return res;
 }
@@ -48,11 +57,11 @@ string_alloc(size_t len)
 }
 
 String
-string_fromSlice(StringSlice *sli)
+string_fromSlice(StringSlice sli)
 {
-    String res = string_alloc(sli->len);
+    String res = string_alloc(sli.len);
 
-    memcpy(res.str, sli->str, sli->len);
+    memcpy(res.str, sli.str, res.len);
 
     return res;
 }
@@ -253,5 +262,17 @@ string(void *ams)
 {
     StringSlice *res = (StringSlice*)ams;
     return res->str;
+}
+
+StringSlice
+stringSlice(char *sz)
+{
+    StringSlice res;
+    const size_t res_len = strlen(sz);
+
+    res.str = sz;
+    res.len = res_len;
+
+    return res;
 }
 

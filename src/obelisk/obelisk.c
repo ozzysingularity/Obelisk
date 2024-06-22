@@ -1,49 +1,34 @@
 #include <obelisk.h>
 
 
-typedef struct build Build;
-
-typedef struct build_exe {
-    Build *owner;
-    
-} BuildExe;
-
 typedef struct build_step BuildStep;
 
 
-/* Adds a build context into a BuildExe */
 void
 build_add(Build *b, BuildExe *be)
 {
-    
 }
 
-/* Adds items to a BuildExe */
 void
-build_exe_add(BuildExe *be, BuildFlag flag)
+build_exe_add(BuildExe *be, BuildExeFlag flag)
 {
-    
 }
 
-/*  */
 void
-build_exe_set(BuildExe *be, BuildExeSetFlag flag)
+build_exe_set(BuildExe *be, BuildExeFlag flag)
 {
-
 }
 
 /*  */
 void
 build_exe_(BuildExe *be, const char *path)
 {
-
 }
 
 /*  */
 void
 build_compile(BuildExe *be)
 {
-
 }
 
 /*  */
@@ -55,7 +40,6 @@ build_command_add(
     char * description
 )
 {
-
 }
 
 /*  */
@@ -66,5 +50,5 @@ build_command_register(
     BuildCommand cmd
 )
 {
-
 }
+

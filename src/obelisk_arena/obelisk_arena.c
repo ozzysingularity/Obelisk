@@ -1,6 +1,9 @@
 #include <obelisk_arena.h>
 
 
+ArenaError a_errno;
+
+
 /* types that don't allow caller to modify themselves */
 #define OPAQUE
 
