@@ -6,15 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <obelisk_docmacros.h>
 #include <obelisk_util.h>
-
-
-/* The THROWS Macro
- *  decorative macros to tell what functions throw in case of error, and what
- *  to check against. if a function throws an error, it will set a_errno. this
- *  macro has no function other than documentation.
- */
-#define THROWS(e, ...)
 
 
 typedef struct arena_chunk {
