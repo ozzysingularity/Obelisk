@@ -24,6 +24,12 @@ string_slice {
     size_t len;
 } StringSlice;
 
+typedef struct
+string_builder {
+    String inner;
+    size_t pos; /* the current pos */
+} StringBuilder;
+
 typedef enum
 string_error {
     S_ok = 0,
@@ -84,6 +90,17 @@ StringSlice
 stringSlice(char *sz);
 
 void string_error(void);
+
+StringBuilder
+stringBuilder_new(size_t size);
+
+void
+stringBuilder_append(StringBuilder *sb, void *ams);
+
+void
+stringBuilder_appendCStr(StringBuilder *sb, char *sz);
+
+
 /* Type Ideas
  * String Vectors (Obelisk.Arena.String)
  *  typedef struct string_vector {
@@ -149,10 +166,20 @@ String
 arenaString_cat(Arena *a, void *ams1, void *ams2);
 
 String
-arenaString_catWithDelimitCString(Arena *a, void *str_a, void *str_b, char *delimit_buf);
+arenaString_catWithDelimitCString
+(
+ Arena *a,
+ void *str_a, void *str_b,
+ char *delimit_buf
+);
 
 String
-arenaString_catWithDelimitChar(Arena *a, void *str_a, void *str_b, char delimit_char);
+arenaString_catWithDelimitChar
+(
+ Arena *a,
+ void *str_a, void *str_b,
+ char delimit_char
+);
 
 /* cap is the capacity of the vector, the amount of strings that it will store
  */
@@ -165,5 +192,7 @@ stringSlice_vectorPut(StringSliceVector *sliv, StringSlice sli);
 StringSlice *
 stringSlice_at(StringSliceVector sliv, size_t idx);
 
+void
+stringSlice_vectorExec(StringSliceVector sliv);
 
 #endif

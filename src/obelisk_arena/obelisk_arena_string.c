@@ -56,6 +56,10 @@ arenaString_fromSlice(Arena *a, StringSlice sli)
 {
     String res = arenaString_alloc(a, sli.len);
 
+    if (s_errno > S_ok) {
+        return (String) { 0 };
+    }
+
     memcpy(res.str, sli.str, res.len);
 
     return res;
@@ -75,10 +79,14 @@ arenaString_cat(Arena *a, void *ams1, void *ams2)
 
     res = arenaString_alloc(a, res_len);
 
+    if (s_errno > S_ok) {
+        return (String) { 0 };
+    }
+
     memcpy(res.str, ams1_sli->str, ams1_sli->len);
     memcpy(res.str + ams1_sli->len, ams2_sli->str, ams2_sli->len);
 
-    s_errno = S_ok;
+    s_errno = S_good;
     return res;
 }
 
@@ -86,10 +94,31 @@ String
 arenaString_catWithDelimitCString
 (
  Arena *a,
- void *str_a, void *str_b,
+ void *ams1, void *ams2,
  char *delimit_buf
 ) {
     String res;
+
+    const
+        StringSlice * ams1_sli = (StringSlice *) ams1,
+                    * ams2_sli = (StringSlice *) ams2;
+    
+    const size_t delimit_buf_len = strlen(delimit_buf);
+
+    const size_t res_len = ams1_sli->len + ams2_sli->len + delimit_buf_len;
+
+    res = arenaString_alloc(a, res_len);
+
+    if (s_errno > S_good) {
+        return (String) { 0 };
+    }
+
+    memcpy(res.str, ams1_sli->str, ams1_sli->len);
+    memcpy(res.str + ams1_sli->len, delimit_buf, delimit_buf_len);
+    memcpy(res.str + ams1_sli->len + delimit_buf_len,
+           ams2_sli->str, ams2_sli->len);
+
+    s_errno = S_ok;
     return res;
 }
 
@@ -97,10 +126,28 @@ String
 arenaString_catWithDelimitChar
 (
  Arena *a,
- void *str_a, void *str_b,
+ void *ams1, void *ams2,
  char delimit_char
 ) {
     String res;
+
+    const
+        StringSlice * ams1_sli = (StringSlice *) ams1,
+                    * ams2_sli = (StringSlice *) ams2;
+
+    const size_t res_len = ams1_sli->len + ams2_sli->len + 1;
+
+    res = arenaString_alloc(a, res_len);
+
+    if (s_errno > S_good) {
+        return (String) { 0 };
+    }
+
+    memcpy(res.str, ams1_sli->str, ams1_sli->len);
+    res.str[ams1_sli->len] = delimit_char;
+    memcpy(res.str + ams1_sli->len + 1, ams2_sli->str, ams2_sli->len);
+
+    s_errno = S_ok;
     return res;
 }
 
@@ -109,7 +156,7 @@ stringSlice_vectorNew(Arena *a, size_t cap)
 {
     StringSliceVector res;
 
-    if (!cap) {
+    if (cap < 0) {
         res.cap = 16;
     } else {
         res.cap = cap;
@@ -145,5 +192,11 @@ stringSlice_at(StringSliceVector sliv, size_t idx)
 
     s_errno = S_ok;
     return &sliv.slis[idx];
+}
+
+void
+stringSlice_vectorExec(StringSliceVector sliv)
+{
+    
 }
 

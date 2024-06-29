@@ -87,9 +87,13 @@ string_slice(String *str, size_t offset, size_t len)
     StringSlice res;
     
     res_str = (str->str + offset);
-    res_len = (len <= str->len - offset)
-                ? len
-                : str->len - offset;
+    if (len == 0) {
+        res_len = str->len;
+    } else {
+        res_len = (len <= str->len - offset)
+            ? len
+            : str->len - offset;
+    }
 
     res.str = res_str;
     res.len = res_len;
@@ -127,27 +131,18 @@ string_cat(void *str_a, void *str_b)
 {
     String res;
 
-    char * str_a_str,
-         * str_b_str;
-
-    size_t str_a_len,
-           str_b_len;
-
     size_t res_len;
 
-    str_a_str = *(char **)str_a;
-    str_b_str = *(char **)str_b;
+    StringSlice * sli_a = (StringSlice *) str_a,
+                * sli_b = (StringSlice *) str_b;
+                        
 
-    str_a_len = *(size_t *)str_a + sizeof(char*);
-    str_b_len = *(size_t *)str_b + sizeof(char*);
-
-    res_len = str_a_len
-            + str_b_len;
+    res_len = sli_a->len + sli_b->len;
 
     res = string_alloc(res_len);
 
-    memcpy(res.str, str_a_str, str_a_len);
-    memcpy(res.str + str_a_len, str_b_str, str_b_len);
+    memcpy(res.str, sli_a->str, sli_a->len);
+    memcpy(res.str + sli_a->len, sli_b->str, sli_b->len);
 
     s_errno = S_ok;
     return res;
@@ -183,6 +178,10 @@ string_catWithDelimitCString(void *str_a, void *str_b, char *delimit_buf)
 
     res = string_alloc(res_len);
 
+    if (s_errno > S_good) {
+        return (String) { 0 };
+    }
+
     memcpy(res.str, str_a_str, str_a_len);
     memcpy(res.str + str_a_len, delimit_buf, delimit_buf_len);
     memcpy(res.str + str_a_len + delimit_buf_len, str_b_str, str_b_len);
@@ -207,6 +206,10 @@ string_catWithDelimitChar(void *str_a, void *str_b, char delimit_char)
     res_len = sli_a->len + sli_b->len + 1;
 
     res = string_alloc(res_len);
+
+    if (s_errno > S_ok) {
+        return (String) { 0 };
+    }
 
     memcpy(res.str, sli_a->str, sli_a->len);
     res.str[sli_a->len] = delimit_char;

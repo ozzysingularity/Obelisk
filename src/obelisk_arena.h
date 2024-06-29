@@ -10,21 +10,24 @@
 #include <obelisk_util.h>
 
 
-typedef struct arena_chunk {
+typedef struct
+arena_chunk {
     void *data;
     size_t pos,
            cap;
     struct arena_chunk *next;
 }ArenaChunk;
 
-typedef struct arena {
+typedef struct
+arena {
     ArenaChunk *root,
                *cur;
     size_t chunk_size;
 } Arena;
 
 /* error are handled by the user */
-typedef enum arena_error {
+typedef enum
+arena_error {
     A_ok = 0,
     A_resolved = 1,
 
@@ -44,14 +47,22 @@ extern ArenaError a_errno;
 
 
 /* initializes an arena */
-void arena_init(Arena *a, size_t chunk_size) THROWS(A_oom);
+void
+arena_init(Arena *a, size_t chunk_size) THROWS(A_oom);
 
 /* allocates a chunk of memory in the current arena chunk */
-void * arena_alloc(Arena *a, size_t len) THROWS(A_oom, A_bcf);
+void *
+arena_alloc(Arena *a, size_t len) THROWS(A_oom, A_bcf);
 
 /* iterates though all of the arena chunks and frees them */
-void arena_free(Arena *a);
+void
+arena_free(Arena *a);
 
-void arena_error(void);
+/* adds new chunk to the arena */
+void
+arena_addChunk(Arena *a);
+
+void
+arena_error(void);
 
 #endif  //  OBELISK_ARENA_H

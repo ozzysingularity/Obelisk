@@ -18,8 +18,6 @@ ArenaError a_errno;
 //    struct arena_chunk *next;
 //};
 
-/* adds new chunk to the arena */
-PRIVATE void arena_addChunk(Arena *a);
 
 /* adds a new ArenaChunk */
 PRIVATE ArenaChunk * arenaChunk_new(size_t chunk_size);
@@ -100,8 +98,6 @@ arena_free(Arena *a)
     }
 }
 
-/* PRIVATE */
-
 void
 arena_addChunk(Arena *a) THROWS(A_oom)
 {
@@ -117,6 +113,9 @@ arena_addChunk(Arena *a) THROWS(A_oom)
 
     a_errno = A_ok;
 }
+
+
+/* PRIVATE */
 
 ArenaChunk *
 arenaChunk_new(size_t chunk_size) THROWS(A_oom)
