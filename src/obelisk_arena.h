@@ -10,21 +10,6 @@
 #include <obelisk_util.h>
 
 
-typedef struct
-arena_chunk {
-    void *data;
-    size_t pos,
-           cap;
-    struct arena_chunk *next;
-}ArenaChunk;
-
-typedef struct
-arena {
-    ArenaChunk *root,
-               *cur;
-    size_t chunk_size;
-} Arena;
-
 /* error are handled by the user */
 typedef enum
 arena_error {
@@ -42,12 +27,25 @@ arena_error {
 //    A_bcf = 254,
 } ArenaError;
 
+typedef struct
+arena_chunk {
+    void *data;
+    size_t pos,
+           cap;
+    struct arena_chunk *next;
+}ArenaChunk;
 
-extern ArenaError a_errno;
+typedef struct
+arena {
+    ArenaChunk *root,
+               *cur;
+    size_t chunk_size;
+    ArenaError err;
+} Arena;
 
 
 /* initializes an arena */
-void
+Arena *
 arena_init(Arena *a, size_t chunk_size) THROWS(A_oom);
 
 /* allocates a chunk of memory in the current arena chunk */
@@ -63,6 +61,6 @@ void
 arena_addChunk(Arena *a);
 
 void
-arena_error(void);
+arena_error(Arena *a);
 
 #endif  //  OBELISK_ARENA_H
