@@ -1,3 +1,14 @@
+# About
+
+Obelisk Build System is inspired by [Tsoding's NoBuild](https://github.com/tsoding/nobuild) build system and the 
+[Zig Build System](https://ziglang.org/documentation/0.13.0/#Zig-Build-System). The philosophy is similar: why learn
+another language to build you language (like GNU Make for instance), rather than just writing it in an actual
+programming language?
+
+These are lofty goals that I have, but I think it's an interesting project to help me learn programming better.
+
+---
+
 # Platforms Supported
 - Linux
 
@@ -50,5 +61,7 @@ build(Build *b)
 
 # Plans for the Future
 
-- Build an interface to install a program aswell as install it;
-- Support more platforms (i.e. Windows, OpenBSD, MacOS).
+- Build an interface to install a program
+- Support more platforms (i.e. Windows, OpenBSD, MacOS);
+- Make sure to clean up all memory properly to avoid memory leaks;
+- Add more flags to the Obelisk command.
