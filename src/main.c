@@ -45,11 +45,28 @@ usage()
           //                           "OPT:VAL\n"
             "  -t, -b, --target         Selects the build file to build the "
                                        "program with\n"
+          //"  --lib                    Selects an archive to link the build "
+          //                           "file to"
           );
 
     exit(1);
 }
 
+int
+file_exists(char *name)
+{
+    int res;
+    FILE *fp;
+
+    if ((fp = fopen(name, "r"))) {
+        res = 1;
+        fclose(fp);
+    } else {
+        res = 0;
+    }
+
+    return res;
+}
 
 void
 build_so(char *source)
@@ -61,24 +78,27 @@ build_so(char *source)
 
     sprintf(output, "/tmp/%s-%.6x.so", source, rng);
 
+    if (!file_exists("/usr/lib/libobelisk.so")) {
+        fprintf(stderr,
+                "\033[1mobelisk: \033[91merror: \033[0mcould not link "
+                "libobelisk.so; please install obelisk or specify the "
+                "--lib <libobelisk.a path> to run\n");
+        exit(1);
+    }
+
     build_init(b, output);
 
-    build_set(b, compiler, "clang");
+    build_set(b, compiler, "cc");
     build_set(b, root_src, source);
 
     build_add(b, sysobj, "obelisk");
 
+    build_add(b, include_path, "src");
+
     build_add(b, flag, "-shared");
     build_add(b, flag, "-fPIC");
 
-    build_command(b);
-
-    char cmd[513];
-
-    sprintf(cmd, "%.*s", (int) command->len, command->str);
-    cmd[512] = 0;
-
-    system(cmd);
+    build_compile(b);
 }
 
 
@@ -100,7 +120,10 @@ main(int argc, char **argv)
 
     while (argc && argv[0][0] == '-' && argv[0][1]) {
         switch (argv[0][1]) {
-        /* options that consume values, ie. -tbuild.c/-t build.c uses build.c as a target */
+
+        /* options that consume values, ie. -tbuild.c/-t build.c uses
+         * build.c as a target
+         */
         case 't': case 'b':
             if (argv[0][2]) {
                 Options.build_file = &argv[0][2];
@@ -176,12 +199,19 @@ main(int argc, char **argv)
         printf("[OPTION] build file: %s\n", Options.build_file);
     }
 
+    if (!file_exists(Options.build_file)) {
+        fprintf(stderr, "\033[1mobelisk: \033[91merror: \033[0m%s: "
+                "no such file\n", Options.build_file);
+        exit(1);
+    }
+
     build_so(Options.build_file);
 
     if (b_errno > B_good) {
         fprintf(stderr, "Build failed\n");
         exit(1);
     }
+
 
     handle = dlopen(output, RTLD_LAZY);
 
@@ -196,7 +226,7 @@ main(int argc, char **argv)
 
     build(b);
 
-    remove("/tmp/build.so");
+    remove(output);
 
     return 0;
 }

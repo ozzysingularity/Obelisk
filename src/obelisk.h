@@ -45,7 +45,10 @@ build {
         StringSlice
             compiler,
             root_src,           /* location of main.c */
-            output_path;        /* -o */
+            output_path,        /* -o */
+
+            install_path,       /* def: /usr/bin */
+            header_path;        /* def: /usr/include */
 
         struct {
             StringSlice path;   /* defines a relative point to look for src
@@ -65,7 +68,8 @@ build {
                                  */
             include_path,       /* -I */
             library_path,       /* -L */
-            flags;              /* other path flags */
+            flags,              /* other path flags */
+            header_files;       /* all header files to install */
     } exe;
 
     StringSlice name;               /* the name of the program */
@@ -122,6 +126,6 @@ build_vAdd(Build *b, AddFlag af, ...) /* ... is char * list, if NULL,
         );
 
 void
-build_command(Build *b);
+build_compile(Build *b);
 
 #endif  // OBELISK_H

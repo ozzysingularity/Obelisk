@@ -44,7 +44,7 @@ string_error {
     SV_bcf = 511,
 } StringError;
 
-extern StringError s_errno; // [TODO] implement s_errno in func calls
+extern StringError s_errno;
 
 
 String

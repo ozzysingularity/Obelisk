@@ -44,6 +44,9 @@ arena {
 } Arena;
 
 
+extern ArenaError a_errno;
+
+
 /* initializes an arena */
 Arena *
 arena_init(Arena *a, size_t chunk_size) THROWS(A_oom);
@@ -61,6 +64,6 @@ void
 arena_addChunk(Arena *a);
 
 void
-arena_error(Arena *a);
+arena_error(void);
 
 #endif  //  OBELISK_ARENA_H

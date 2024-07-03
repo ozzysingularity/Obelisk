@@ -15,7 +15,8 @@ Arena _set_arena,
       *set_arena = &_set_arena,
       *add_arena = &_add_arena;
 
-String _command, *command;
+String *command,
+       _command; 
 
 void
 build_cleanUp(Build *b)
@@ -41,11 +42,14 @@ build_init(Build *b, char *name)
     b->exe.compiler = stringSlice("cc");
     b->exe.root_src = (StringSlice){ 0 };
     b->exe.output_path = (StringSlice){ 0 };
+
+    b->exe.install_path = stringSlice("/usr/bin");
+    b->exe.header_path = stringSlice("/usr/include");
+
     b->exe.source_path.path = (StringSlice){ 0 };
     b->exe.source_path.search = 0;
 
     b->exe.src_paths = stringSlice_vectorNew(b->arena, 16);
-
     b->exe.obj_paths = stringSlice_vectorNew(b->arena, 8);
 
     b->exe.sysobj_names = stringSlice_vectorNew(b->arena, 8);
@@ -55,6 +59,8 @@ build_init(Build *b, char *name)
     b->exe.library_path = stringSlice_vectorNew(b->arena, 8);
 
     b->exe.flags = stringSlice_vectorNew(b->arena, 24);
+
+    b->exe.header_files = stringSlice_vectorNew(b->arena, 32);
 
     _command = string_alloc(0);
     command = &_command;
@@ -211,9 +217,10 @@ build_vAdd(Build *b, AddFlag af, ...)
 }
 
 void
-build_command(Build *b)
+build_compile(Build *b)
 {
     size_t i;
+    int res;
 
     _command = string_cat(command, &b->exe.compiler);
 
@@ -233,7 +240,7 @@ build_command(Build *b)
     String output = string_cat(&oflag, &b->name);
 
     _command = string_catWithDelimitChar(command, &output, ' ');
-    
+
     _command = string_catWithDelimitChar(command, &b->exe.output_path, ' ');
 
     _command = string_catWithDelimitChar(command, &b->exe.root_src, ' ');
@@ -255,8 +262,14 @@ build_command(Build *b)
     sprintf(cmd, "%.*s", (int) command->len, command->str);
     cmd[512] = 0;
 
-    system(cmd);
+    res = system(cmd);
+
+    if (res > B_good) {
+        b_errno = B_fail;
+    }
 
     build_cleanUp(b);
+
+    b_errno = B_ok;
 }
 

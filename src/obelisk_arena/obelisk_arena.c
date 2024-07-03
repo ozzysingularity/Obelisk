@@ -29,14 +29,14 @@ PRIVATE void arenaChunk_free(ArenaChunk *ach);
 ArenaError a_errno;
 
 
-void
+Arena *
 arena_init(Arena *a, size_t chunk_size)
 {
     size_t a_chsz = ALIGN(chunk_size);
     ArenaChunk *a_rt = arenaChunk_new(a_chsz);
 
     if (a_errno > A_good) {
-        return;
+        return NULL;
     }
 
     a->root = a_rt;
@@ -44,6 +44,8 @@ arena_init(Arena *a, size_t chunk_size)
     a->chunk_size = a_chsz;
 
     a_errno = A_ok;
+
+    return a;
 }
 
 void *
