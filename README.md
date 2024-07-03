@@ -23,7 +23,7 @@
 
 # Using
 
-## Obelisk API
+## Obelisk API (overview)
 
 ```c
 /* include the library header file */
@@ -45,8 +45,6 @@ build(Build *b)
     build_compile(b);
 }
 ```
-
-For more, look at the DOCUMENTATION file.
 
 ---
 
